@@ -48,7 +48,7 @@ export const PipelineStats: React.FC<PipelineStatsProps> = ({ metrics, workers }
           {metrics.totalRelationsMapped}
         </div>
         <div className="text-xs text-slate-400 mt-1">
-          <span>Cross-platform alias links</span>
+          <span>Evidence co-occurrences</span>
         </div>
       </div>
 
@@ -62,14 +62,14 @@ export const PipelineStats: React.FC<PipelineStatsProps> = ({ metrics, workers }
           {metrics.averageIngestionLatencyMs}ms
         </div>
         <div className="text-xs text-slate-400 mt-1">
-          <span>Sub-second deterministic NLP</span>
+          <span>Measured processing time</span>
         </div>
       </div>
 
       {/* Metric 5: Active Worker Pool */}
       <div className="p-4 bg-slate-900/80 border border-slate-800 rounded-lg col-span-2 lg:col-span-1">
         <div className="flex items-center justify-between text-xs text-slate-400 mb-1.5">
-          <span>Identity Cluster</span>
+          <span>Backend Activity</span>
           <Cpu className="w-3.5 h-3.5 text-purple-400" />
         </div>
         <div className="text-xl font-bold text-white font-mono tabular-nums">

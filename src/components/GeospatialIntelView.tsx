@@ -27,7 +27,7 @@ export const GeospatialIntelView: React.FC<GeospatialIntelViewProps> = ({ entiti
 
     // From entities
     entities
-      .filter((e) => e.category === 'geo' && e.metadata?.latitude && e.metadata?.longitude)
+      .filter((e) => e.category === 'geo' && e.metadata?.latitude !== undefined && e.metadata?.longitude !== undefined)
       .forEach((e) => {
         const art = artifacts.find((a) => a.id === e.artifactId);
         list.push({
@@ -46,9 +46,9 @@ export const GeospatialIntelView: React.FC<GeospatialIntelViewProps> = ({ entiti
 
     // Also check artifacts with EXIF parsed if not already present
     artifacts.forEach((art) => {
-      if (art.exifParsed?.latitude && art.exifParsed?.longitude) {
+      if (art.exifParsed?.latitude !== undefined && art.exifParsed?.longitude !== undefined) {
         const exists = list.some(
-          (p) => Math.abs(p.latitude - art.exifParsed!.latitude!) < 0.001
+          (p) => p.sourceTitle === art.title && Math.abs(p.latitude - art.exifParsed!.latitude!) < 0.001 && Math.abs(p.longitude - art.exifParsed!.longitude!) < 0.001
         );
         if (!exists) {
           list.push({

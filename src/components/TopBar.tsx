@@ -97,7 +97,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         {isAiEnabled && (
           <span className="hidden lg:inline-flex items-center gap-1.5 text-xs text-slate-400">
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Gemini-3.8-Flash</span>
+            <span>Semantic NER</span>
           </span>
         )}
         <button

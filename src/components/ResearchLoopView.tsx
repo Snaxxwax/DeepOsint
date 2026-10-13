@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Play, 
-  RotateCcw, 
-  CheckCircle2, 
-  XCircle, 
-  AlertTriangle, 
-  FileText, 
-  Database, 
-  Terminal, 
-  ShieldCheck, 
-  Clock, 
-  Search, 
-  ArrowRight, 
-  BookOpen, 
-  Layers, 
+import {
+  Play,
+  RotateCcw,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  FileText,
+  Database,
+  Terminal,
+  ShieldCheck,
+  Clock,
+  Search,
+  ArrowRight,
+  BookOpen,
+  Layers,
   RefreshCw,
   Copy,
   Check,
@@ -59,17 +59,19 @@ export const ResearchLoopView: React.FC<ResearchLoopViewProps> = () => {
         body: JSON.stringify({
           provider: 'fixture',
           resume,
+          ...(resume ? {runId:runData?.runs?.[0]?.run_id} : {}),
           watch: true,
         }),
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Research request failed');
       if (data.success) {
         setRunData(data.dbState);
         setReportMarkdown(data.reportMd);
         setExecLogs(data.execOutput);
       }
     } catch (err) {
-      console.error('Failed to run research loop:', err);
+      setExecLogs(err instanceof Error ? err.message : 'Research failed');
     } finally {
       setIsRunning(false);
     }
@@ -94,7 +96,8 @@ export const ResearchLoopView: React.FC<ResearchLoopViewProps> = () => {
     if (!overrideReason.trim()) return;
     setIsSubmittingOverride(true);
     try {
-      const runId = runData?.runs?.[0]?.run_id || 'run_2026-10-12_90';
+      const runId = runData?.runs?.[0]?.run_id;
+      if(!runId) return;
       const res = await fetch('/api/rloop/override', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -106,8 +109,10 @@ export const ResearchLoopView: React.FC<ResearchLoopViewProps> = () => {
         }),
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Research request failed');
       if (data.success) {
         setRunData(data.dbState);
+        setReportMarkdown(data.reportMd);
         setOverrideReason('');
       }
     } catch (err) {
@@ -149,7 +154,7 @@ export const ResearchLoopView: React.FC<ResearchLoopViewProps> = () => {
             </div>
             <h2 className="text-lg font-bold text-white tracking-tight">The Research Loop</h2>
             <p className="text-xs text-slate-400 mt-1 max-w-3xl leading-relaxed">
-              Takes one question, builds an angle grid, extracts claims with mandatory find-the-words verification, 
+              Offline reference fixture: takes one question, builds an angle grid, extracts claims with mandatory find-the-words verification,
               clusters syndicated copies by 50% word shingling, applies plain-code A–D/X grading rules, and auto-refines via the Fix Table until target grade is met.
             </p>
           </div>
@@ -181,7 +186,7 @@ export const ResearchLoopView: React.FC<ResearchLoopViewProps> = () => {
               className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-800 rounded transition-colors disabled:opacity-50"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Run 24 Offline Tests</span>
+              <span>Run Offline Tests</span>
             </button>
           </div>
         </div>
@@ -241,7 +246,7 @@ export const ResearchLoopView: React.FC<ResearchLoopViewProps> = () => {
           }`}
         >
           <Terminal className="w-3.5 h-3.5 text-teal-400" />
-          <span>Test Suite (24 Passed)</span>
+          <span>Test Suite</span>
         </button>
       </div>
 
@@ -803,7 +808,7 @@ export const ResearchLoopView: React.FC<ResearchLoopViewProps> = () => {
           <div className="bg-slate-900/90 border border-slate-800 rounded-lg p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-base font-semibold text-white">Offline Test Suite (24 Tests)</h3>
+                <h3 className="text-base font-semibold text-white">Offline Test Suite</h3>
                 <p className="text-xs text-slate-400 mt-0.5">
                   Verified against <code>python3 -m unittest -v</code> in <code>research-loop/tests/test_rloop.py</code>.
                 </p>
@@ -820,34 +825,7 @@ export const ResearchLoopView: React.FC<ResearchLoopViewProps> = () => {
             </div>
 
             <div className="p-4 bg-slate-950 rounded-lg border border-slate-800 font-mono text-xs text-emerald-400 leading-relaxed overflow-x-auto">
-              <pre>{testResults?.output || `test_fed_chair_demo_three_rounds_grade_a (tests.test_rloop.TestResearchLoop) ... ok
-test_fetch_date_extraction_meta (tests.test_rloop.TestResearchLoop) ... ok
-test_fetch_text_extraction (tests.test_rloop.TestResearchLoop) ... ok
-test_find_the_words_passes (tests.test_rloop.TestResearchLoop) ... ok
-test_find_the_words_rejects_hallucination (tests.test_rloop.TestResearchLoop) ... ok
-test_find_the_words_rejects_missing_sentence (tests.test_rloop.TestResearchLoop) ... ok
-test_find_the_words_rejects_missing_value (tests.test_rloop.TestResearchLoop) ... ok
-test_fixture_provider_returns_results (tests.test_rloop.TestResearchLoop) ... ok
-test_grade_fresh_source_of_record_wins (tests.test_rloop.TestResearchLoop) ... ok
-test_grade_past_shelf_life_drops (tests.test_rloop.TestResearchLoop) ... ok
-test_grade_single_origin_stale_is_d (tests.test_rloop.TestResearchLoop) ... ok
-test_planner_angles (tests.test_rloop.TestResearchLoop) ... ok
-test_planner_primary_domain_site_filter (tests.test_rloop.TestResearchLoop) ... ok
-test_planner_query_never_contains_answer (tests.test_rloop.TestResearchLoop) ... ok
-test_provenance_shingle_clustering (tests.test_rloop.TestResearchLoop) ... ok
-test_provenance_url_normalization (tests.test_rloop.TestResearchLoop) ... ok
-test_spec_empty_frame_slot (tests.test_rloop.TestResearchLoop) ... ok
-test_spec_invalid_as_of_date (tests.test_rloop.TestResearchLoop) ... ok
-test_spec_no_slots (tests.test_rloop.TestResearchLoop) ... ok
-test_spec_relative_word_in_query (tests.test_rloop.TestResearchLoop) ... ok
-test_spec_valid (tests.test_rloop.TestResearchLoop) ... ok
-test_store_crash_and_resume (tests.test_rloop.TestResearchLoop) ... ok
-test_store_idempotent_writes (tests.test_rloop.TestResearchLoop) ... ok
-test_tavily_adapter_moves_site_filter (tests.test_rloop.TestResearchLoop) ... ok
-----------------------------------------------------------------------
-Ran 24 tests in 0.109s
-
-OK`}</pre>
+              <pre>{testResults?.output || 'Run the test suite to see results.'}</pre>
             </div>
           </div>
         </div>

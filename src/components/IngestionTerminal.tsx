@@ -1,3 +1,4 @@
+import { readFileBase64 } from '../utils/files';
 import React, { useState } from 'react';
 import { IngestedArtifact, SourceType } from '../types/osint';
 import { PRELOADED_DATASETS, PreloadedDataset } from '../utils/sampleData';
@@ -12,6 +13,7 @@ interface IngestionTerminalProps {
     classificationLevel: IngestedArtifact['classificationLevel'];
     rawContent: string;
     useGeminiNlp: boolean;
+    fileBase64?: string;
   }) => Promise<void>;
   onSelectArtifact: (art: IngestedArtifact) => void;
   selectedArtifactId?: string;
@@ -27,7 +29,7 @@ export const IngestionTerminal: React.FC<IngestionTerminalProps> = ({
   isProcessing,
   activeProcessingStage,
 }) => {
-  const [activeTab, setActiveTab] = useState<'scenarios' | 'custom'>('scenarios');
+  const [activeTab, setActiveTab] = useState<'scenarios' | 'custom'>('custom');
   const [customTitle, setCustomTitle] = useState('');
   const [customSourceType, setCustomSourceType] = useState<SourceType>('corporate_registry');
   const [customUri, setCustomUri] = useState('');
@@ -133,7 +135,7 @@ export const IngestionTerminal: React.FC<IngestionTerminalProps> = ({
                   activeTab === 'scenarios' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                Persona Scenarios
+                Sample Scenarios
               </button>
               <button
                 type="button"
@@ -147,6 +149,16 @@ export const IngestionTerminal: React.FC<IngestionTerminalProps> = ({
             </div>
           </div>
         </div>
+
+        <label className="block mt-4 text-xs text-slate-300">
+          Upload text, code, PDF, JPEG or PNG evidence (maximum 10 MiB)
+          <input type="file" className="block mt-2" disabled={isProcessing} accept=".txt,.log,.json,.csv,.md,.py,.ts,.js,.pdf,.jpg,.jpeg,.png" onChange={async event=>{
+            const file=event.target.files?.[0]; if(!file)return;
+            try { const fileBase64=await readFileBase64(file); await onIngestNew({title:file.name,sourceType:customSourceType,sourceUri:`upload://${encodeURIComponent(file.name)}`,classificationLevel:customClass,rawContent:'',useGeminiNlp,fileBase64}); }
+            catch(err:any) {window.alert(err.message);}
+            event.target.value='';
+          }} />
+        </label>
 
         {/* Tab 1: Pre-loaded Multi-source Intelligence Scenarios */}
         {activeTab === 'scenarios' && (
