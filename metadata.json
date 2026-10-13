@@ -1,0 +1,8 @@
+{
+  "name": "Remix IntelFlow OSINT Pipeline",
+  "description": "Scalable, automated intelligence platform for extracting entities and insights from complex, heterogeneous multi-source data streams.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

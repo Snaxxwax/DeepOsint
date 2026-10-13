@@ -1,0 +1,46 @@
+{
+  "question": "Who chairs the Federal Reserve and what seat does Jerome Powell hold?",
+  "as_of": "2026-10-12",
+  "required_grade": "A",
+  "fact_class": "leadership",
+  "shelf_life_days": 90,
+  "primary_domains": [
+    "federalreserve.gov"
+  ],
+  "max_rounds": 5,
+  "results_per_query": 8,
+  "slots": [
+    {
+      "slot_id": "chair",
+      "question": "Who chairs the Federal Reserve?",
+      "answer_terms": [
+        "chair",
+        "chairman"
+      ],
+      "alt_terms": [
+        "board roster",
+        "leadership"
+      ],
+      "value_patterns": [
+        "Chair ([A-Z][a-z]+ [A-Z][a-z]+)",
+        "([A-Z][a-z]+ [A-Z][a-z]+),? Chair"
+      ]
+    },
+    {
+      "slot_id": "powell_seat",
+      "question": "What seat does Jerome Powell hold?",
+      "answer_terms": [
+        "governor",
+        "seat"
+      ],
+      "alt_terms": [
+        "Member",
+        "term"
+      ],
+      "value_patterns": [
+        "Jerome H?\\.? Powell,? (Member|governor)",
+        "(governor) Jerome Powell"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "queries": {
+    "federal reserve chair": [
+      { "url": "https://reuters.com/markets/fed-chair-warsh.html", "title": "Kevin Warsh Appointed Chair of Federal Reserve", "snippet": "Kevin Warsh Chair of Federal Reserve", "published_date": "2026-05-22" },
+      { "url": "https://yahoo.com/news/fed-chair-warsh-syndicated.html", "title": "Kevin Warsh Appointed Chair of Federal Reserve", "snippet": "Kevin Warsh Chair of Federal Reserve", "published_date": "2026-05-22" },
+      { "url": "https://msn.com/news/fed-chair-warsh.html", "title": "Kevin Warsh Appointed Chair of Federal Reserve", "snippet": "Kevin Warsh Chair of Federal Reserve", "published_date": "2026-05-22" },
+      { "url": "https://aol.com/news/fed-chair-warsh.html", "title": "Kevin Warsh Appointed Chair of Federal Reserve", "snippet": "Kevin Warsh Chair of Federal Reserve", "published_date": "2026-05-22" },
+      { "url": "https://investing.com/news/fed-chair-warsh.html", "title": "Kevin Warsh Appointed Chair of Federal Reserve", "snippet": "Kevin Warsh Chair of Federal Reserve", "published_date": "2026-05-22" },
+      { "url": "https://wsj.com/economy/fed-chair-warsh.html", "title": "Senate Confirms Kevin Warsh as Fed Chair", "snippet": "Kevin Warsh, Chair of the Fed", "published_date": "2026-05-20" },
+      { "url": "https://broken-finance-feed.com/dead", "title": "Dead Link", "snippet": "Not found", "published_date": "2026-05-01" },
+      { "url": "https://bloomberg.com/2025/powell-chair.html", "title": "Powell Leads Federal Reserve", "snippet": "Jerome Powell Chair of the Federal Reserve", "published_date": "2025-03-15" }
+    ],
+    "federal reserve official roster board chair": [
+      { "url": "https://reuters.com/markets/fed-chair-warsh.html", "title": "Kevin Warsh Appointed Chair of Federal Reserve", "snippet": "Kevin Warsh Chair of Federal Reserve", "published_date": "2026-05-22" },
+      { "url": "https://wsj.com/economy/fed-chair-warsh.html", "title": "Senate Confirms Kevin Warsh as Fed Chair", "snippet": "Kevin Warsh, Chair of the Fed", "published_date": "2026-05-20" }
+    ],
+    "jerome powell governor": [
+      { "url": "https://reuters.com/markets/fed-chair-warsh.html", "title": "Kevin Warsh Appointed Chair of Federal Reserve", "snippet": "Jerome Powell continues serving as governor", "published_date": "2026-05-22" }
+    ],
+    "jerome powell official roster board governor": [
+      { "url": "https://reuters.com/markets/fed-chair-warsh.html", "title": "Kevin Warsh Appointed Chair of Federal Reserve", "snippet": "Jerome Powell continues serving as governor", "published_date": "2026-05-22" }
+    ],
+    "site:federalreserve.gov federal reserve chair": [
+      { "url": "https://www.federalreserve.gov/aboutthefed/bios/board/default.htm", "title": "Board of Governors of the Federal Reserve System", "snippet": "Kevin Warsh, Chair. Jerome H. Powell, Member.", "published_date": "2026-09-15" }
+    ],
+    "site:federalreserve.gov jerome powell governor": [
+      { "url": "https://www.federalreserve.gov/aboutthefed/bios/board/default.htm", "title": "Board of Governors of the Federal Reserve System", "snippet": "Kevin Warsh, Chair. Jerome H. Powell, Member.", "published_date": "2026-09-15" }
+    ],
+    "site:federalreserve.gov jerome powell member": [
+      { "url": "https://www.federalreserve.gov/aboutthefed/bios/board/default.htm", "title": "Board of Governors of the Federal Reserve System", "snippet": "Kevin Warsh, Chair. Jerome H. Powell, Member.", "published_date": "2026-09-15" },
+      { "url": "https://ft.com/markets/powell-seat-confirmed.html", "title": "Jerome Powell serving as governor on Fed board", "snippet": "Jerome Powell, governor", "published_date": "2026-09-20" }
+    ],
+    "jerome powell member": [
+      { "url": "https://ft.com/markets/powell-seat-confirmed.html", "title": "Jerome Powell serving as governor on Fed board", "snippet": "Jerome Powell, governor", "published_date": "2026-09-20" },
+      { "url": "https://www.federalreserve.gov/aboutthefed/bios/board/default.htm", "title": "Board of Governors of the Federal Reserve System", "snippet": "Kevin Warsh, Chair. Jerome H. Powell, Member.", "published_date": "2026-09-15" }
+    ]
+  },
+  "pages": {
+    "https://reuters.com/markets/fed-chair-warsh.html": {
+      "status_code": 200,
+      "published_date": "2026-05-22",
+      "text": "WASHINGTON (Reuters) - In a major leadership transition at the central bank, Kevin Warsh was confirmed as Chair of the Federal Reserve Board of Governors. Former Chairman Jerome Powell continues his remaining term as governor."
+    },
+    "https://yahoo.com/news/fed-chair-warsh-syndicated.html": {
+      "status_code": 200,
+      "published_date": "2026-05-22",
+      "text": "WASHINGTON (Reuters) - In a major leadership transition at the central bank, Kevin Warsh was confirmed as Chair of the Federal Reserve Board of Governors. Former Chairman Jerome Powell continues his remaining term as governor."
+    },
+    "https://msn.com/news/fed-chair-warsh.html": {
+      "status_code": 200,
+      "published_date": "2026-05-22",
+      "text": "WASHINGTON (Reuters) - In a major leadership transition at the central bank, Kevin Warsh was confirmed as Chair of the Federal Reserve Board of Governors. Former Chairman Jerome Powell continues his remaining term as governor."
+    },
+    "https://aol.com/news/fed-chair-warsh.html": {
+      "status_code": 200,
+      "published_date": "2026-05-22",
+      "text": "WASHINGTON (Reuters) - In a major leadership transition at the central bank, Kevin Warsh was confirmed as Chair of the Federal Reserve Board of Governors. Former Chairman Jerome Powell continues his remaining term as governor."
+    },
+    "https://investing.com/news/fed-chair-warsh.html": {
+      "status_code": 200,
+      "published_date": "2026-05-22",
+      "text": "WASHINGTON (Reuters) - In a major leadership transition at the central bank, Kevin Warsh was confirmed as Chair of the Federal Reserve Board of Governors. Former Chairman Jerome Powell continues his remaining term as governor."
+    },
+    "https://wsj.com/economy/fed-chair-warsh.html": {
+      "status_code": 200,
+      "published_date": "2026-05-20",
+      "text": "The United States Senate has confirmed Kevin Warsh as Chair of the Federal Reserve. Wall Street analysts noted that Kevin Warsh will guide interest rate policy while Jerome Powell remains as governor through his unexpired appointment."
+    },
+    "https://broken-finance-feed.com/dead": {
+      "status_code": 404,
+      "text": "404 Not Found"
+    },
+    "https://bloomberg.com/2025/powell-chair.html": {
+      "status_code": 200,
+      "published_date": "2025-03-15",
+      "text": "Jerome Powell continues his duties as Chair of the Federal Reserve amidst inflation targets in 2025."
+    },
+    "https://www.federalreserve.gov/aboutthefed/bios/board/default.htm": {
+      "status_code": 200,
+      "published_date": "2026-09-15",
+      "text": "Board of Governors of the Federal Reserve System official roster. Leadership: Kevin Warsh, Chair. Board Members: Jerome H. Powell, Member. Philip Jefferson, Vice Chair. Christopher Waller, Member. Lisa Cook, Member."
+    },
+    "https://ft.com/markets/powell-seat-confirmed.html": {
+      "status_code": 200,
+      "published_date": "2026-09-20",
+      "text": "Financial Times analysis of Federal Reserve roster updates indicates Jerome Powell serving as governor on the board of governors following leadership change."
+    }
+  }
+}
