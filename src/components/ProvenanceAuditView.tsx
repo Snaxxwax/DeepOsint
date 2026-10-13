@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { IngestedArtifact, ExtractedEntity } from '../types/osint';
-import { computePseudoSha256 } from '../utils/extractor';
 import { ShieldCheck, ShieldAlert, CheckCircle2, Hash, Clock, Server, Eye, AlertOctagon, RotateCw } from 'lucide-react';
 
 interface ProvenanceAuditViewProps {
@@ -25,6 +24,14 @@ export const ProvenanceAuditView: React.FC<ProvenanceAuditViewProps> = ({
     currentArtifact ? currentArtifact.rawContent : ''
   );
   const [isTamperTested, setIsTamperTested] = useState(false);
+  const [computedBufferHash, setComputedBufferHash] = useState('');
+  React.useEffect(() => {
+    let valid=true;
+    crypto.subtle.digest('SHA-256',new TextEncoder().encode(tamperBuffer)).then(hash=>{
+      if(valid)setComputedBufferHash(Array.from(new Uint8Array(hash)).map(v=>v.toString(16).padStart(2,'0')).join(''));
+    });
+    return ()=>{valid=false;};
+  },[tamperBuffer]);
 
   // Sync tamper buffer if artifact changes
   React.useEffect(() => {
@@ -43,7 +50,7 @@ export const ProvenanceAuditView: React.FC<ProvenanceAuditViewProps> = ({
   }
 
   // Live computed hash of current buffer
-  const computedBufferHash = computePseudoSha256(tamperBuffer);
+
   const isHashMatching = computedBufferHash === currentArtifact.sha256Hash;
 
   // Entities belonging to this artifact

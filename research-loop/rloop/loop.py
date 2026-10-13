@@ -36,6 +36,14 @@ class ResearchLoop:
         current_round = run_record["round"] if run_record else 1
         current_stage = run_record["stage_marker"] if run_record else "planned"
 
+        if current_stage == "completed":
+            return {
+                "run_id": run_id,
+                "rounds": current_round,
+                "stop_reason": run_record["stop_reason"],
+                "grades": [dict(g) for g in self.store.get_grades_for_run(run_id)],
+            }
+
         flat_rounds_count = 0
         previous_grades_signature = None
 

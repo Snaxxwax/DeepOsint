@@ -1,3 +1,4 @@
+import { readFileBase64 } from '../utils/files';
 import React, { useState } from 'react';
 import { 
   Search, Plus, X, Sparkles, Shield, Terminal, ArrowRight, 
@@ -28,10 +29,10 @@ const PRESET_SCENARIOS: {
       { value: 'CA 7XYZ890', type: 'license_plate' },
       { value: 'vance_ops', type: 'username' },
     ],
-    description: 'Correlates highway ALPR plate sightings, darknet forum handles, and registered Palo Alto residence deed.',
+    description: 'Example seed identifiers for testing query formulation.',
   },
   {
-    title: 'Dark Web Forum & Leak Pivot',
+    title: 'Sample Handle Pivot',
     badge: 'Email + Telegram + Phone',
     identifiers: [
       { value: 'elena.rostova@proton.me', type: 'email' },
@@ -68,19 +69,15 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
   isAiEnabled,
 }) => {
   // Seed Identifiers State
-  const [identifiers, setIdentifiers] = useState<SeedIdentifier[]>([
-    { id: 'id-1', value: 'Marcus Vance', type: 'name', inferredType: 'name' },
-    { id: 'id-2', value: 'CA 7XYZ890', type: 'license_plate', inferredType: 'license_plate' },
-    { id: 'id-3', value: 'vance_ops', type: 'username', inferredType: 'username' },
-  ]);
+  const [identifiers, setIdentifiers] = useState<SeedIdentifier[]>([]);
 
   const [inputVal, setInputVal] = useState('');
   const [selectedType, setSelectedType] = useState<SeedIdentifierType>('auto');
   const [searchDepth, setSearchDepth] = useState<'fast' | 'deep' | 'comprehensive'>('deep');
   const [includeOcrExif, setIncludeOcrExif] = useState(true);
   
-  // Companion file mock
-  const [companionFiles, setCompanionFiles] = useState<{ name: string; content: string; type: string }[]>([]);
+  // Uploaded evidence
+  const [companionFiles, setCompanionFiles] = useState<{ name: string; fileBase64: string }[]>([]);
 
   // Execution & Progress States
   const [isSearching, setIsSearching] = useState(false);
@@ -146,19 +143,14 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
     setIdentifiers(formatted);
   };
 
-  const handleAddSampleCompanion = () => {
-    setCompanionFiles([
-      {
-        name: 'surveillance_alpr_cam402.log',
-        type: 'log',
-        content: `[ALPR CAM-402 RAW SIGHTING LOG]\nTIMESTAMP: 2024-09-02T14:45:22Z\nLOCATION: US-101 Northbound @ Palo Alto Expressway\nLPR_READ: CA 7XYZ890\nCONFIDENCE: 99.2%\nVEHICLE_MAKE: Tesla Model 3 (Slate Grey)\nEXIF_GPS: 37.4419 N, -122.1430 W`,
-      },
-      {
-        name: 'darkweb_forum_exploit_leak.txt',
-        type: 'leak',
-        content: `[EXPLOITMARKET DUMP]\nUSER: vance_ops\nEMAIL: marcus.vance@proton.me\nESCROW_XMR: 48b...49a\nREGISTERED_IP: 198.51.100.44\nNOTES: Security architect at Vanguard Synthetics`,
-      },
-    ]);
+  const handleAttachFiles = async (event:React.ChangeEvent<HTMLInputElement>) => {
+    const files=Array.from(event.target.files || []);
+    try {
+      if(files.length>10)throw new Error('At most 10 files');
+      const uploads=await Promise.all(files.map(async file=>({name:file.name,fileBase64:await readFileBase64(file)})));
+      setCompanionFiles(uploads);
+    } catch(err:any) {setStepLogs([err.message]);}
+    event.target.value='';
   };
 
   const handleLaunchInvestigation = async () => {
@@ -174,41 +166,22 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
     };
 
     try {
-      // Step 1: Identifier Normalization & Dork Expansion
-      log(`Normalizing ${identifiers.length} seed identifier(s)...`);
-      identifiers.forEach((id) => {
-        log(`Formulated dorks for [${id.type.toUpperCase()}]: ${id.value}`);
-      });
-      await new Promise((r) => setTimeout(r, 400));
-
-      // Step 2: Deep Web & Dark Web Breach Scan
+      log(`Submitting ${identifiers.length} identifiers and ${companionFiles.length} evidence files to the backend...`);
       setCurrentStep(2);
-      log(`Scanning Tor onion mirrors, Pastebin archives, and BreachedCorp databases...`);
-      await new Promise((r) => setTimeout(r, 450));
-
-      // Step 3: ALPR OCR & EXIF Geolocation Extraction
-      if (includeOcrExif) {
-        setCurrentStep(3);
-        log(`Running ALPR optical character recognition and EXIF GPS parser...`);
-        await new Promise((r) => setTimeout(r, 350));
-      }
-
-      // Step 4: AI Reasoning & Correlation
-      setCurrentStep(4);
-      log(`Executing Gemini-3.8-Flash OSINT disambiguation and persona synthesis...`);
-
       const resp = await fetch('/api/search/investigate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          identifiers: identifiers.map((i) => i.value),
+          identifiers: identifiers.map((i) => ({value:i.value,type:i.type})),
           searchDepth,
           companionFiles,
+          includeOcrExif,
+          useGeminiNlp:isAiEnabled,
         }),
       });
 
       if (!resp.ok) {
-        throw new Error(`Investigation API responded with status ${resp.status}`);
+        throw new Error((await resp.json()).error || `Investigation failed (${resp.status})`);
       }
 
       const data = await resp.json();
@@ -292,7 +265,7 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-cyan-400" />
-              <h2 className="text-base font-semibold text-white">Deep Web & Dark Web Investigation Engine</h2>
+              <h2 className="text-base font-semibold text-white">Evidence Investigation</h2>
             </div>
             <p className="text-xs text-slate-400 mt-1">
               Enter 1 or more seed identifiers (Name, Email, Phone, License Plate, Username) to trigger multi-source intelligence gathering, AI reasoning, and graph correlation.
@@ -302,7 +275,7 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 text-xs text-slate-300">
               <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Gemini-3.8-Flash Reasoning: Active</span>
+              <span>Semantic Extraction Available</span>
             </span>
           </div>
         </div>
@@ -398,9 +371,9 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
                 onChange={(e) => setSearchDepth(e.target.value as any)}
                 className="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-500"
               >
-                <option value="fast">Fast Triage (Public Indexes & Pastebins)</option>
-                <option value="deep">Deep Web (Breach Dumps & Tor Mirrors)</option>
-                <option value="comprehensive">Comprehensive (Breaches, ALPR Logs & Git Mirrors)</option>
+                <option value="fast">Fast (one query per identifier)</option>
+                <option value="deep">Expanded (two queries per identifier)</option>
+                <option value="comprehensive">Comprehensive (three queries per identifier)</option>
               </select>
             </div>
 
@@ -415,23 +388,24 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
                 />
                 <span className="flex items-center gap-1.5 font-medium">
                   <Camera className="w-3.5 h-3.5 text-amber-400" />
-                  Enable ALPR OCR & EXIF Parsing
+                  Enable file OCR & EXIF parsing
                 </span>
               </label>
               <p className="text-[11px] text-slate-500 mt-0.5">
-                Automatically extracts vehicle license plates and GPS tags from media records
+                Processes text and GPS metadata from uploaded images and PDFs
               </p>
             </div>
 
             {/* Companion Evidence Upload */}
             <div className="flex items-center justify-end gap-2">
+              <input id="evidence-files" type="file" multiple accept=".txt,.log,.json,.csv,.md,.pdf,.png,.jpg,.jpeg" className="hidden" onChange={handleAttachFiles} />
               <button
                 type="button"
-                onClick={handleAddSampleCompanion}
+                onClick={() => document.getElementById('evidence-files')?.click()}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded transition-colors whitespace-nowrap"
               >
                 <FileText className="w-3.5 h-3.5 text-teal-400" />
-                <span>{companionFiles.length > 0 ? `Attached (${companionFiles.length})` : 'Attach Sample Evidence'}</span>
+                <span>{companionFiles.length > 0 ? `Attached (${companionFiles.length})` : 'Attach Evidence'}</span>
               </button>
 
               <button
@@ -448,7 +422,7 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
                 ) : (
                   <>
                     <Search className="w-4 h-4 text-slate-900" />
-                    <span>Launch Deep Search</span>
+                    <span>Run Investigation</span>
                   </>
                 )}
               </button>
@@ -480,16 +454,16 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
               <div className="text-[10px] text-slate-400">Dork signatures</div>
             </div>
             <div className={`p-2 rounded border ${currentStep >= 2 ? 'border-cyan-500 bg-cyan-950/30 text-cyan-300' : 'border-slate-800 text-slate-500'}`}>
-              <div className="font-bold">2. Deep & Dark Web</div>
-              <div className="text-[10px] text-slate-400">Breach & Tor scan</div>
+              <div className="font-bold">2. Search & Evidence</div>
+              <div className="text-[10px] text-slate-400">Configured provider</div>
             </div>
             <div className={`p-2 rounded border ${currentStep >= 3 ? 'border-cyan-500 bg-cyan-950/30 text-cyan-300' : 'border-slate-800 text-slate-500'}`}>
               <div className="font-bold">3. OCR & EXIF</div>
-              <div className="text-[10px] text-slate-400">Plates & GPS parse</div>
+              <div className="text-[10px] text-slate-400">Uploaded file parsing</div>
             </div>
             <div className={`p-2 rounded border ${currentStep >= 4 ? 'border-cyan-500 bg-cyan-950/30 text-cyan-300' : 'border-slate-800 text-slate-500'}`}>
-              <div className="font-bold">4. Gemini NER & Graph</div>
-              <div className="text-[10px] text-slate-400">Attribution reasoning</div>
+              <div className="font-bold">4. Entity Extraction</div>
+              <div className="text-[10px] text-slate-400">Source-grounded identifiers</div>
             </div>
           </div>
 
@@ -513,7 +487,7 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-cyan-400" />
-                <h3 className="text-sm font-semibold text-white">Gemini OSINT Executive Reasoning & Attribution</h3>
+                <h3 className="text-sm font-semibold text-white">Evidence Collection Summary</h3>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -542,7 +516,7 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
             {/* Co-Occurrence Corroborations */}
             {activeDossier.coOccurrences && activeDossier.coOccurrences.length > 0 && (
               <div className="mt-4 pt-3 border-t border-slate-800/80">
-                <h4 className="text-xs font-semibold text-slate-400 mb-2">Verified Co-Occurrence Linkages</h4>
+                <h4 className="text-xs font-semibold text-slate-400 mb-2">Observed Co-Occurrence Linkages</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
                   {activeDossier.coOccurrences.map((co, cIdx) => (
                     <div key={cIdx} className="p-2.5 bg-slate-950/40 rounded border border-slate-800/80 flex flex-col justify-between">
@@ -573,7 +547,7 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
                 <div className="text-base font-bold text-cyan-300 font-mono mt-0.5">{activeDossier.extractedEdges.length}</div>
               </div>
               <div className="p-2.5 bg-slate-950/60 rounded border border-slate-800">
-                <div className="text-slate-400 text-[11px]">Deep/Dark Web Hits</div>
+                <div className="text-slate-400 text-[11px]">Evidence Records</div>
                 <div className="text-base font-bold text-amber-300 font-mono mt-0.5">{activeDossier.totalHits}</div>
               </div>
               <div className="p-2.5 bg-slate-950/60 rounded border border-slate-800">
@@ -591,7 +565,7 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
               <div>
                 <h3 className="text-sm font-semibold text-white">Discovered Personal & Operational Identifiers</h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Names, emails, phone numbers, license plates, handles, and physical locations extracted from deep web corpus
+                  Identifiers extracted from collected snippets and uploaded evidence
                 </p>
               </div>
 
@@ -670,7 +644,7 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
 
                       <td className="py-2.5 px-4 text-right font-mono">
                         <span className={ent.threatScore && ent.threatScore > 60 ? 'text-rose-400 font-bold' : 'text-slate-400'}>
-                          {ent.threatScore || 40}/100
+                          {ent.threatScore === undefined ? 'Not assessed' : `${ent.threatScore}/100`}
                         </span>
                       </td>
 
@@ -696,9 +670,9 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-semibold text-white">Discovered Deep Web & Dark Web Source Hits</h3>
+                <h3 className="text-sm font-semibold text-white">Collected Source Evidence</h3>
               </div>
-              <span className="text-xs text-slate-400 font-mono">{activeDossier.hits.length} records verified</span>
+              <span className="text-xs text-slate-400 font-mono">{activeDossier.hits.length} evidence records</span>
             </div>
 
             <div className="mt-3 space-y-3">
@@ -724,8 +698,8 @@ export const InvestigationConsole: React.FC<InvestigationConsoleProps> = ({
 
                   <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] text-slate-500 font-mono pt-1">
                     <div className="flex items-center gap-3">
-                      <span>Onion / Mirror: <span className="text-cyan-400">{hit.onionMirror || 'deepweb://archive'}</span></span>
-                      <span>Leak Date: {new Date(hit.leakDate).toLocaleDateString()}</span>
+                      <span>Source URI: <span className="text-cyan-400">{hit.onionMirror || 'deepweb://archive'}</span></span>
+                      <span>Collected: {new Date(hit.leakDate).toLocaleDateString()}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <span>SHA-256:</span>

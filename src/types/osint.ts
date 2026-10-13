@@ -86,14 +86,16 @@ export interface SeedIdentifier {
 export interface DeepWebHit {
   id: string;
   source: string;
-  sourceType: 'darkweb_forum' | 'breach_dump' | 'pastebin' | 'code_repo' | 'vehicle_registry' | 'deepweb_onion';
+  sourceType: 'darkweb_forum' | 'breach_dump' | 'pastebin' | 'code_repo' | 'vehicle_registry' | 'deepweb_onion' | 'public_web' | 'analyst_upload';
   title: string;
   leakDate: string;
   snippet: string;
   matchedIdentifiers: string[];
   onionMirror?: string;
   sha256: string;
-  threatLevel: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  threatLevel: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN';
+  artifactId?: string;
+  evidenceScope?: 'search_snippet' | 'uploaded_file';
 }
 
 export interface InvestigationDossier {
@@ -114,6 +116,8 @@ export interface InvestigationDossier {
   extractedEdges: RelationalEdge[];
   timestamp: string;
   auditHash: string;
+  artifactIds?: string[];
+  warnings?: string[];
 }
 
 export interface ExtractedEntity {
@@ -186,6 +190,9 @@ export interface IngestedArtifact {
   rawContent: string;
   contentByteLength: number;
   sha256Hash: string;
+  originalSha256Hash?: string;
+  originalByteLength?: number;
+  warnings?: string[];
   ingestedAt: string;
   collectorNode: string;
   status: 'QUEUED' | 'INGESTING' | 'PREPROCESSING' | 'EXTRACTING' | 'GRAPH_SYNTHESIS' | 'COMPLETED' | 'FAILED';
